@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Cleanup') {
             steps {
-                echo 'Limpando workspace e containers não finalizados'
+                echo 'Limpando workspace e containers não utilizados'
                 sh 'docker system prune -f || true'
             }
         }
@@ -19,14 +19,14 @@ pipeline {
         stage('Construção') {
             steps {
                 echo 'Construindo imagens Docker'
-                sh 'docker compose build'
+                sh 'docker-compose build'
             }
         }
 
         stage('Entrega') {
             steps {
                 echo 'Subindo containers'
-                sh 'docker compose up -d'
+                sh 'docker-compose up -d'
             }
         }
     }
@@ -40,3 +40,4 @@ pipeline {
         }
     }
 }
+
