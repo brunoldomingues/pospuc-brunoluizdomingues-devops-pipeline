@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: dockerfile.mysql
+    container_name: peline_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpwd
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpwd"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build:
+      context: ./web
+      dockerfile: dockerfile.web
+    container_name: pipeline_web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: rootpwd
+      MYSQL_ADDRESS: db:3306
+      MYSQL_DBNAME: docker_e_kubernetes
+    ports:
+      - "8200:8200"
+    restart: on-failure
+
+volumes:
+  mysql_data:
