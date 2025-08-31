@@ -1,30 +1,38 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_WEB = "atividade02-web"
+        IMAGE_DB = "atividade02-db"
+    }
+
     stages {
+        stage('Cleanup') {
+            steps {
+                echo "Limpando containers e imagens antigas..."
+                sh 'docker-compose down -v || true'
+                sh 'docker system prune -af || true'
+            }
+        }
+
         stage('Checkout') {
             steps {
-                echo 'Pegando código do GitHub...'
-                checkout scm
+                git branch: 'main', url: 'https://github.com/brunoldomingues/pospuc-brunoluizdomingues-devops-pipeline.git'
             }
         }
 
-        stage('Build Docker Images') {
+        stage('Build') {
             steps {
-                echo 'Construindo imagens Docker...'
-                sh 'docker build -t atividade02-db ./db'
-                sh 'docker build -t atividade02-web ./web'
+                echo "Construindo imagens Docker..."
+                sh 'docker-compose build'
             }
         }
 
-        stage('Run Containers') {
+        stage('Deploy') {
             steps {
-                echo 'Subindo containers...'
-                sh 'docker network create devops_net || true'
-                sh 'docker run -d --name mysql_devops --network devops_net -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=docker_e_kubernetes -e MYSQL_USER=bruno -e MYSQL_PASSWORD=bruno123 atividade02-db'
-                sh 'docker run -d --name flask_devops --network devops_net -p 8300:8300 -e MYSQL_USERNAME=bruno -e MYSQL_PASSWORD=bruno123 -e MYSQL_ADDRESS=mysql_devops:3306 -e MYSQL_DBNAME=docker_e_kubernetes atividade02-web'
+                echo "Subindo containers..."
+                sh 'docker-compose up -d'
             }
         }
     }
 }
-
