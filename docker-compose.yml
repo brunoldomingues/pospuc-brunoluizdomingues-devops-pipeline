@@ -4,7 +4,7 @@ services:
   db:
     build:
       context: ./db
-      dockerfile: dockerfile.mysql
+      dockerfile: Dockerfile.mysql
     container_name: peline_db
     environment:
       MYSQL_ROOT_PASSWORD: rootpwd
@@ -21,7 +21,7 @@ services:
   web:
     build:
       context: ./web
-      dockerfile: dockerfile.web
+      dockerfile: Dockerfile.web
     container_name: pipeline_web
     depends_on:
       db:
