@@ -9,6 +9,7 @@ pipeline {
     stages {
         stage('Cleanup') {
             steps {
+                deleteDir()
                 echo "Limpando containers e imagens antigas..."
                 sh 'docker-compose down -v || true'
                 sh 'docker system prune -af || true'
