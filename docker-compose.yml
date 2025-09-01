@@ -1,37 +1,15 @@
 services:
-  db:
-    build:
-       context: ./db
-       dockerfile: Dockerfile.mysql
-    container_name: mysql_devops
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: docker_e_kubernetes
-      MYSQL_USER: bruno
-      MYSQL_PASSWORD: bruno123
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
     ports:
-      - "3306:3306"
-    networks:
-      - devops_net
+      - "8200:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: "0:0"
 
-  web:
-    build:
-       context: ./web
-       dockerfile: Dockerfile.web
-    container_name: flask_devops
-    environment:
-      MYSQL_USERNAME: bruno
-      MYSQL_PASSWORD: bruno123
-      MYSQL_ADDRESS: db:3306
-      MYSQL_DBNAME: docker_e_kubernetes
-    ports:
-      - "8300:8300"
-    depends_on:
-      - db
-    networks:
-      - devops_net
-
-networks:
-  devops_net:
-    external: true
-
+volumes:
+  jenkins_home:
+  
