@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // variaveis de ambiente
         GITHUB_TOKEN = credentials('github-pat')
     }
 
