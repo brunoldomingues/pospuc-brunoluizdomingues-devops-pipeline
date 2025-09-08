@@ -19,10 +19,9 @@ pipeline {
             steps {
                 echo 'Clonando repositório...'
 
-                withCredentials([string(credentialsId: 'github-pat', variable: 'TOKEN')]) {
-
-                    sh 'git clone https://$TOKEN@github.com/brunoldomingues/pospuc-brunoluizdomingues-devops-pipeline.git .'
-                }
+                git branch: 'main',
+                url: 'https://github.com/brunoldomingues/pospuc-brunoluizdomingues-devops-pipeline.git',
+                credentialsId: 'github-pat'
             }
         }
 
@@ -30,7 +29,7 @@ pipeline {
             steps{
                 echo 'Construindo imagens...'
                 
-                sh 'docker build --nocache -t atividade02-db ./db'
+                sh 'docker build --nochache -t atividade02-db ./db'
                 sh 'docker build --nocache -t atividade02-web ./web'
             }
         }
@@ -47,7 +46,7 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline finalizada com sucesso.'
+            echo 'Pipeline finalizada com sucesso'
         }
     }
 }
